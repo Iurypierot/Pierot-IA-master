@@ -84,6 +84,7 @@ if (SpeechRecognition) {
 
     let lastProcessed = '';
     let processingTimeout = null;
+    let recognitionTimeout = null;
 
     recognition.onresult = (event) => {
         const currentIndex = event.resultIndex;
@@ -102,6 +103,8 @@ if (SpeechRecognition) {
             if (isFinal && transcript !== lastProcessed) {
                 lastProcessed = transcript;
                 takeCommand(transcript);
+                // Para o microfone imediatamente após processar
+                stopRecognition();
             }
         } 
         // Android/Outros: processa imediatamente se for final
@@ -109,6 +112,8 @@ if (SpeechRecognition) {
             if (isFinal && transcript !== lastProcessed) {
                 lastProcessed = transcript;
                 takeCommand(transcript);
+                // Para o microfone imediatamente após processar
+                stopRecognition();
             } 
             // Processa resultados intermediários após 0.2s de silêncio (ultra rápido)
             else if (!isFinal && transcript.length > 2 && transcript !== lastProcessed) {
@@ -118,6 +123,8 @@ if (SpeechRecognition) {
                         if (transcript !== lastProcessed) {
                             lastProcessed = transcript;
                             takeCommand(transcript);
+                            // Para o microfone após processar comando rápido
+                            stopRecognition();
                         }
                     }, 200); // Processa após apenas 200ms de estabilidade (mais rápido)
                 }
@@ -150,15 +157,51 @@ if (SpeechRecognition) {
     };
 
     recognition.onend = () => {
+        // Limpa timeout se existir
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
+        }
         // Reconhecimento terminou (normal ou por erro)
-        // iOS: reseta o estado para permitir novo reconhecimento
-        if (isIOS) {
+        // Reseta o estado para permitir novo reconhecimento
+        if (content.textContent === "Audição..." || content.textContent === "Ouvindo...") {
             content.textContent = "Clique aqui para falar";
         }
     };
+    
+    // Função para parar o reconhecimento de voz
+    function stopRecognition() {
+        try {
+            // Limpa timeout
+            if (recognitionTimeout) {
+                clearTimeout(recognitionTimeout);
+                recognitionTimeout = null;
+            }
+            if (recognition && (recognition.state === 'listening' || recognition.state === 'starting')) {
+                if (isIOS) {
+                    recognition.abort(); // iOS funciona melhor com abort
+                } else {
+                    recognition.stop();
+                }
+            }
+        } catch (e) {
+            // Ignora erros ao parar
+            console.log("Reconhecimento já estava parado");
+        }
+    }
 
     recognition.onstart = () => {
         content.textContent = "Audição...";
+        // Timeout para desligar microfone automaticamente após 10 segundos sem fala
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+        }
+        recognitionTimeout = setTimeout(() => {
+            if (recognition && (recognition.state === 'listening' || recognition.state === 'starting')) {
+                content.textContent = "Tempo esgotado. Clique para falar novamente.";
+                stopRecognition();
+            }
+        }, 10000); // 10 segundos
     };
 
     // Função auxiliar para detectar comandos rápidos
