@@ -51,9 +51,26 @@
     justify-content: center;
     align-items: center;
     width: 40vw;
+    min-width: 300px;
+    max-width: 500px;
     height: 50px;
     border-radius: 20px;
     background: rgb(202 253 255 / 50%);
+}
+
+@media (max-width: 768px) {
+    .main .input {
+        width: 90vw;
+        min-width: 280px;
+    }
+    
+    .main .image-container .image img {
+        width: 250px;
+    }
+    
+    .main .image-container h1 {
+        font-size: 30px;
+    }
 }
 
 .main .input .talk {
