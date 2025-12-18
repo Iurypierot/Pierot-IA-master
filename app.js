@@ -1,5 +1,9 @@
-const btn = document.querySelector('.talk');
-const content = document.querySelector('.content');
+// Detecta se é iOS PRIMEIRO (antes de usar)
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+// Aguarda o DOM estar pronto
+let btn, content;
 
 // Variável para armazenar as vozes (importante para Android)
 let voicesLoaded = false;
@@ -66,15 +70,33 @@ function initializeApp() {
     // Não fala nada, apenas inicializa silenciosamente
 }
 
-// Detecta se é iOS
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
 // Configuração do Speech Recognition (compatível com iOS e Android)
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 
-if (SpeechRecognition) {
+// Função para inicializar quando o DOM estiver pronto
+function initApp() {
+    btn = document.querySelector('.talk');
+    content = document.querySelector('.content');
+    
+    if (!btn || !content) {
+        console.error("Elementos não encontrados!");
+        return;
+    }
+    
+    setupRecognition();
+}
+
+// Configura o reconhecimento de voz
+function setupRecognition() {
+    if (!SpeechRecognition) {
+        if (content) {
+            content.textContent = "Reconhecimento de voz não suportado neste dispositivo.";
+        }
+        return;
+    }
+
+    recognition = new SpeechRecognition();
     recognition = new SpeechRecognition();
     recognition.lang = "pt-BR";
     recognition.continuous = false;
@@ -213,64 +235,128 @@ if (SpeechRecognition) {
 
     // Função para iniciar reconhecimento (compartilhada entre click e touch)
     function startRecognition() {
+        if (!btn || !content) {
+            console.error("Elementos não encontrados!");
+            return;
+        }
+        
         if (!initialized) {
             initializeApp();
         }
         
         // Cancela qualquer fala em andamento para ser mais rápido
-        window.speechSynthesis.cancel();
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        }
         
         try {
             // Para qualquer reconhecimento anterior
             if (recognition) {
+                // Verifica o estado atual
+                const currentState = recognition.state;
+                console.log("Estado atual do reconhecimento:", currentState);
+                
                 // iOS: precisa parar completamente antes de iniciar novo
                 if (isIOS) {
-                    if (recognition.state !== 'inactive' && recognition.state !== 'stopped') {
-                        recognition.abort(); // iOS funciona melhor com abort
+                    if (currentState !== 'inactive' && currentState !== 'stopped') {
+                        try {
+                            recognition.abort(); // iOS funciona melhor com abort
+                        } catch (e) {
+                            console.log("Erro ao abortar:", e);
+                        }
                     }
                     // Pequeno delay no iOS para garantir que parou
                     setTimeout(() => {
-                        content.textContent = "Ouvindo...";
-                        recognition.start();
-                    }, 50);
+                        try {
+                            content.textContent = "Ouvindo...";
+                            recognition.start();
+                        } catch (e) {
+                            console.error("Erro ao iniciar (iOS):", e);
+                            content.textContent = "Erro ao iniciar. Tente novamente.";
+                        }
+                    }, 100);
                 } else {
-                    // Android/Outros: inicia imediatamente
-                    if (recognition.state === 'listening' || recognition.state === 'starting') {
-                        recognition.stop();
+                    // Android/Outros: para e inicia imediatamente
+                    if (currentState === 'listening' || currentState === 'starting') {
+                        try {
+                            recognition.stop();
+                        } catch (e) {
+                            console.log("Erro ao parar:", e);
+                        }
                     }
-                    content.textContent = "Ouvindo...";
-                    recognition.start();
+                    // Pequeno delay para garantir que parou antes de iniciar
+                    setTimeout(() => {
+                        try {
+                            content.textContent = "Ouvindo...";
+                            recognition.start();
+                        } catch (e) {
+                            console.error("Erro ao iniciar:", e);
+                            content.textContent = "Erro ao iniciar. Tente novamente.";
+                        }
+                    }, 50);
                 }
+            } else {
+                content.textContent = "Reconhecimento não disponível.";
             }
         } catch (error) {
             console.error("Erro ao iniciar reconhecimento:", error);
-            content.textContent = "Erro ao iniciar. Tente novamente.";
+            if (content) {
+                content.textContent = "Erro ao iniciar. Tente novamente.";
+            }
             // iOS: tenta novamente após erro
             if (isIOS && error.name !== 'InvalidStateError') {
                 setTimeout(() => {
                     try {
-                        content.textContent = "Ouvindo...";
+                        if (content) content.textContent = "Ouvindo...";
                         recognition.start();
                     } catch (e) {
-                        content.textContent = "Permita o acesso ao microfone nas configurações.";
+                        if (content) content.textContent = "Permita o acesso ao microfone nas configurações.";
                     }
-                }, 100);
+                }, 200);
             }
         }
     }
 
-    // iOS requer que o start seja chamado diretamente no evento de usuário
-    btn.addEventListener('click', startRecognition);
+    // Função para iniciar quando clicar no botão ou no texto
+    function handleStart(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        startRecognition();
+    }
+    
+    // Adiciona listeners ao botão
+    btn.addEventListener('click', handleStart);
+    
+    // Adiciona listener ao texto também (para facilitar o clique)
+    if (content) {
+        content.style.cursor = 'pointer';
+        content.addEventListener('click', handleStart);
+    }
     
     // iOS também responde a touchstart (importante para iOS)
     if (isIOS) {
         btn.addEventListener('touchstart', function(event) {
             event.preventDefault();
+            event.stopPropagation();
             startRecognition();
         }, { passive: false });
+        
+        if (content) {
+            content.addEventListener('touchstart', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                startRecognition();
+            }, { passive: false });
+        }
     }
+}
+
+// Inicializa quando o DOM estiver pronto
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
 } else {
-    content.textContent = "Reconhecimento de voz não suportado neste dispositivo.";
+    // DOM já está pronto
+    initApp();
 }
 
 function takeCommand(message) {

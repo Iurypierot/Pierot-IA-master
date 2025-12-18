@@ -16,19 +16,24 @@
 </head>
 
 <body>
-    <section class="main">
+    <main class="main" role="main">
         <div class="image-container">
             <div class="image">
-                <img src="giphy.gif" alt="image">
+                <img src="giphy.gif" alt="Pierot IA - Assistente Virtual" loading="lazy">
             </div>
             <h1>P I E R O T</h1>
             <p>Sou Assistente Virtual</p>
         </div>
-        <div class="input">
-            <button class="talk" type="button" aria-label="Falar"><i class="fas fa-microphone-alt"></i></button>
-            <h1 class="content"> Clique aqui para falar</h1>
+        <div class="input" role="region" aria-label="Área de reconhecimento de voz">
+            <button class="talk" type="button" aria-label="Ativar microfone para falar" aria-pressed="false">
+                <i class="fas fa-microphone-alt" aria-hidden="true"></i>
+            </button>
+            <h2 class="content" role="status" aria-live="polite">Clique aqui para falar</h2>
         </div>
-    </section>
+    </main>
+    <footer role="contentinfo">
+        <p>© Iury Pierot. Todos os direitos reservados.</p>
+    </footer>
     <script src="app.js"></script>
 </body>
 
