@@ -74,6 +74,64 @@ function initializeApp() {
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 
+// Função para configurar o botão de escrita
+function setupWriteButton() {
+    const writeBtn = document.querySelector('.write');
+    const inputWrite = document.querySelector('.input-write');
+    const textInput = document.querySelector('.text-input');
+    const sendBtn = document.querySelector('.send');
+    const inputContainer = document.querySelector('.input');
+    
+    if (!writeBtn || !inputWrite || !textInput || !sendBtn) {
+        console.error("Elementos de escrita não encontrados!");
+        return;
+    }
+    
+    // Função para abrir campo de digitação
+    function openWriteMode() {
+        inputContainer.style.display = 'none';
+        inputWrite.style.display = 'flex';
+        textInput.focus();
+    }
+    
+    // Função para fechar campo de digitação
+    function closeWriteMode() {
+        inputContainer.style.display = 'flex';
+        inputWrite.style.display = 'none';
+        textInput.value = '';
+    }
+    
+    // Função para processar texto enviado
+    function handleTextSubmit() {
+        const text = textInput.value.trim();
+        if (text) {
+            content.textContent = text;
+            takeCommand(text);
+            closeWriteMode();
+        }
+    }
+    
+    // Eventos do botão de escrita
+    writeBtn.addEventListener('click', openWriteMode);
+    
+    // Eventos do botão de envio
+    sendBtn.addEventListener('click', handleTextSubmit);
+    
+    // Enviar ao pressionar Enter
+    textInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            handleTextSubmit();
+        }
+    });
+    
+    // Fechar ao pressionar Escape
+    textInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeWriteMode();
+        }
+    });
+}
+
 // Função para inicializar quando o DOM estiver pronto
 function initApp() {
     btn = document.querySelector('.talk');
@@ -85,6 +143,7 @@ function initApp() {
     }
     
     setupRecognition();
+    setupWriteButton();
 }
 
 // Configura o reconhecimento de voz
@@ -359,64 +418,43 @@ if (document.readyState === 'loading') {
     initApp();
 }
 
+// Função auxiliar para abrir Google e ChatGPT simultaneamente
+function openGoogleAndChatGPT(query) {
+    if (query && query.length > 1) {
+        // Abre Google com a busca
+        window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+        // Abre ChatGPT
+        window.open("https://chat.openai.com", "_blank");
+        content.textContent = `Buscando: ${query}`;
+    } else {
+        // Se não tem query, apenas abre ambos
+        window.open("https://www.google.com", "_blank");
+        window.open("https://chat.openai.com", "_blank");
+        content.textContent = "Abrindo Google e ChatGPT...";
+    }
+}
+
 function takeCommand(message) {
     // Normaliza a mensagem para comparação rápida
     const msg = message.trim().toLowerCase();
     const cleanMessage = msg;
     
-    // Comandos para ChatGPT - prioridade máxima, detecção rápida
-    if (msg.includes('chatgpt') || msg.includes('chat gpt') || msg.includes('gpt') || 
-        msg.includes('abrir chatgpt') || msg.includes('abrir gpt')) {
+    // Comandos específicos para apenas ChatGPT
+    if (msg.includes('abrir chatgpt') || msg.includes('abrir gpt') || 
+        msg === 'chatgpt' || msg === 'gpt') {
         window.open("https://chat.openai.com", "_blank");
         content.textContent = "Abrindo ChatGPT...";
         return;
     }
     
-    // Comandos para IA - direciona para ChatGPT
-    if (msg.includes('ia') || msg.includes('inteligência artificial') || 
-        msg.includes('perguntar para a ia') || msg.includes('falar com ia')) {
-        window.open("https://chat.openai.com", "_blank");
-        content.textContent = "Abrindo ChatGPT...";
+    // Comandos específicos para apenas Google
+    if (msg === 'google' || msg === 'abrir google') {
+        window.open("https://www.google.com", "_blank");
+        content.textContent = "Abrindo Google...";
         return;
     }
     
-    // Comandos para Google - detecção rápida
-    if (msg.includes('google')) {
-        let searchQuery = cleanMessage.replace(/google/gi, '').trim();
-        if (!searchQuery) {
-            window.open("https://www.google.com", "_blank");
-            content.textContent = "Abrindo Google...";
-        } else {
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, "_blank");
-            content.textContent = `Buscando: ${searchQuery}`;
-        }
-        return;
-    }
-    
-    // Comandos de busca - processamento rápido
-    if (msg.includes('pesquisar') || msg.includes('buscar') || msg.includes('procurar') ||
-        msg.includes('o que é') || msg.includes('quem é')) {
-        let searchQuery = cleanMessage
-            .replace(/pesquisar|buscar|procurar|o que é|quem é/gi, '')
-            .trim();
-        if (searchQuery) {
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, "_blank");
-            content.textContent = `Buscando: ${searchQuery}`;
-        } else {
-            window.open("https://www.google.com", "_blank");
-            content.textContent = "Abrindo Google...";
-        }
-        return;
-    }
-    
-    // Comandos de pergunta (como, onde) - busca rápida
-    if (msg.startsWith('como') || msg.startsWith('onde')) {
-        window.open(`https://www.google.com/search?q=${encodeURIComponent(cleanMessage)}`, "_blank");
-        content.textContent = `Buscando: ${cleanMessage}`;
-        return;
-    }
-    
-    // YouTube - rápido
+    // YouTube - apenas YouTube
     if (msg.includes("youtube") || msg.includes("vídeo")) {
         let videoQuery = cleanMessage.replace(/youtube|vídeo|video/gi, '').trim();
         if (videoQuery) {
@@ -429,7 +467,7 @@ function takeCommand(message) {
         return;
     }
     
-    // Wikipedia - rápido
+    // Wikipedia - apenas Wikipedia
     if (msg.includes("wikipedia") || msg.includes("wikipédia")) {
         let wikiQuery = cleanMessage.replace(/wikipedia|wikipédia/gi, '').trim();
         if (wikiQuery) {
@@ -442,7 +480,7 @@ function takeCommand(message) {
         return;
     }
     
-    // Comandos de informação - resposta rápida
+    // Comandos de informação - resposta rápida (sem abrir sites)
     if (msg.includes('hora') || msg.includes('horas')) {
         const time = new Date().toLocaleTimeString('pt-BR', { hour: "2-digit", minute: "2-digit" });
         content.textContent = `São ${time}`;
@@ -457,16 +495,20 @@ function takeCommand(message) {
         return;
     }
     
-    // Por padrão, busca no Google imediatamente (mais rápido)
-    const searchQuery = cleanMessage
-        .replace(/hey|hello|olá|oi|abrir|abre|mostrar|mostra|falar|dizer/gi, '')
+    // Para TODOS os outros comandos: abre Google E ChatGPT simultaneamente
+    // Remove palavras comuns de comando para extrair a busca
+    let searchQuery = cleanMessage
+        .replace(/chatgpt|chat gpt|gpt|google|pesquisar|buscar|procurar|o que é|quem é|como|onde|ia|inteligência artificial|assistente ia|perguntar para|falar com|hey|hello|olá|oi|abrir|abre|mostrar|mostra|falar|dizer/gi, '')
         .trim();
     
+    // Se tem uma query de busca, usa ela; senão usa a mensagem completa
     if (searchQuery && searchQuery.length > 1) {
-        window.open(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`, "_blank");
-        content.textContent = `Buscando: ${searchQuery}`;
+        openGoogleAndChatGPT(searchQuery);
+    } else if (cleanMessage.length > 1) {
+        // Usa a mensagem completa como busca
+        openGoogleAndChatGPT(cleanMessage);
     } else {
-        window.open("https://www.google.com", "_blank");
-        content.textContent = "Abrindo Google...";
+        // Se não tem nada, apenas abre ambos
+        openGoogleAndChatGPT("");
     }
 }
