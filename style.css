@@ -1,535 +1,536 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700&display=swap");
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Roboto Mono", monospace;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto Mono", monospace;
 }
 
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
 body {
-    min-height: 100vh;
-    background: #000;
-    background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
+  min-height: 100vh;
+  background: #000;
+  background: linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .main {
-    min-height: calc(100vh - 80px);
-    position: relative;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    flex: 1;
+  min-height: calc(100vh - 80px);
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  flex: 1;
 }
 
 .main .image-container {
-    padding: 20px;
-    width: 100%;
-    max-width: 600px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeInUp 0.8s ease-out;
+  padding: 20px;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInUp 0.8s ease-out;
 }
 
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .main .image-container .image {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .main .image-container .image img {
-    width: 100%;
-    max-width: 350px;
-    height: auto;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 188, 212, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 188, 212, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .main .image-container .image img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 15px 50px rgba(0, 188, 212, 0.3);
+  transform: scale(1.05);
+  box-shadow: 0 15px 50px rgba(0, 188, 212, 0.3);
 }
 
 .main .image-container h1 {
-    color: #00bcd4;
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: clamp(28px, 5vw, 48px);
-    font-weight: 600;
-    letter-spacing: 3px;
-    text-shadow: 0 0 20px rgba(0, 188, 212, 0.5);
-    animation: glow 2s ease-in-out infinite alternate;
+  color: #00bcd4;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-shadow: 0 0 20px rgba(0, 188, 212, 0.5);
+  animation: glow 2s ease-in-out infinite alternate;
 }
 
 @keyframes glow {
-    from {
-        text-shadow: 0 0 20px rgba(0, 188, 212, 0.5);
-    }
-    to {
-        text-shadow: 0 0 30px rgba(0, 188, 212, 0.8), 0 0 40px rgba(0, 188, 212, 0.4);
-    }
+  from {
+    text-shadow: 0 0 20px rgba(0, 188, 212, 0.5);
+  }
+  to {
+    text-shadow: 0 0 30px rgba(0, 188, 212, 0.8),
+      0 0 40px rgba(0, 188, 212, 0.4);
+  }
 }
 
 .main .image-container p {
-    color: #6b7d7d;
-    text-align: center;
-    margin-bottom: 40px;
-    font-size: clamp(14px, 2.5vw, 18px);
-    font-weight: 300;
-    letter-spacing: 1px;
+  color: #6b7d7d;
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: clamp(14px, 2.5vw, 18px);
+  font-weight: 300;
+  letter-spacing: 1px;
 }
 
 .main .input {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    max-width: 500px;
-    min-width: 280px;
-    height: 60px;
-    border-radius: 30px;
-    background: rgba(202, 253, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 188, 212, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-    animation: fadeInUp 1s ease-out 0.2s both;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  min-width: 280px;
+  height: 60px;
+  border-radius: 30px;
+  background: rgba(202, 253, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 188, 212, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  animation: fadeInUp 1s ease-out 0.2s both;
 }
 
 .main .input:hover {
-    background: rgba(202, 253, 255, 0.15);
-    border-color: rgba(0, 188, 212, 0.4);
-    box-shadow: 0 12px 40px rgba(0, 188, 212, 0.2);
-    transform: translateY(-2px);
+  background: rgba(202, 253, 255, 0.15);
+  border-color: rgba(0, 188, 212, 0.4);
+  box-shadow: 0 12px 40px rgba(0, 188, 212, 0.2);
+  transform: translateY(-2px);
 }
 
 .main .input .talk {
-    background: transparent;
-    outline: none;
-    border: none;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 15px;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    margin-left: 5px;
+  background: transparent;
+  outline: none;
+  border: none;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin-left: 5px;
 }
 
 .main .input .talk:hover {
-    background: rgba(0, 188, 212, 0.1);
-    transform: scale(1.1);
+  background: rgba(0, 188, 212, 0.1);
+  transform: scale(1.1);
 }
 
 .main .input .talk:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }
 
 .main .input .talk i {
-    font-size: 22px;
-    color: #00bcd4;
-    transition: all 0.3s ease;
+  font-size: 22px;
+  color: #00bcd4;
+  transition: all 0.3s ease;
 }
 
 .main .input .talk:hover i {
-    color: #00e5ff;
-    transform: scale(1.1);
+  color: #00e5ff;
+  transform: scale(1.1);
 }
 
 .main .input .content {
-    color: #aed0d0;
-    font-size: clamp(13px, 2vw, 16px);
-    margin-right: 20px;
-    margin-left: 10px;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-    transition: color 0.3s ease;
-    cursor: pointer;
-    user-select: none;
-    margin: 0;
-    line-height: 1.4;
+  color: #aed0d0;
+  font-size: clamp(13px, 2vw, 16px);
+  margin-right: 20px;
+  margin-left: 10px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
+  line-height: 1.4;
 }
 
 .main .input .content:hover {
-    color: #00bcd4;
+  color: #00bcd4;
 }
 
 .main .input .write {
-    background: transparent;
-    outline: none;
-    border: none;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 15px;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    margin-right: 5px;
+  background: transparent;
+  outline: none;
+  border: none;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin-right: 5px;
 }
 
 .main .input .write:hover {
-    background: rgba(0, 188, 212, 0.1);
-    transform: scale(1.1);
+  background: rgba(0, 188, 212, 0.1);
+  transform: scale(1.1);
 }
 
 .main .input .write:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }
 
 .main .input .write i {
-    font-size: 22px;
-    color: #00bcd4;
-    transition: all 0.3s ease;
+  font-size: 22px;
+  color: #00bcd4;
+  transition: all 0.3s ease;
 }
 
 .main .input .write:hover i {
-    color: #00e5ff;
-    transform: scale(1.1);
+  color: #00e5ff;
+  transform: scale(1.1);
 }
 
 .main .input-write {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    max-width: 500px;
-    height: 60px;
-    border-radius: 30px;
-    background: rgba(202, 253, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 188, 212, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-    animation: fadeInUp 0.5s ease-out;
-    margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  height: 60px;
+  border-radius: 30px;
+  background: rgba(202, 253, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 188, 212, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  animation: fadeInUp 0.5s ease-out;
+  margin-top: 15px;
 }
 
 .main .input-write:hover {
-    background: rgba(202, 253, 255, 0.15);
-    border-color: rgba(0, 188, 212, 0.4);
-    box-shadow: 0 12px 40px rgba(0, 188, 212, 0.2);
+  background: rgba(202, 253, 255, 0.15);
+  border-color: rgba(0, 188, 212, 0.4);
+  box-shadow: 0 12px 40px rgba(0, 188, 212, 0.2);
 }
 
 .main .input-write .text-input {
-    background: transparent;
-    border: none;
-    outline: none;
-    width: 100%;
-    height: 100%;
-    padding: 0 20px;
-    color: #aed0d0;
-    font-size: 14px;
-    font-family: "Roboto Mono", monospace;
-    transition: color 0.3s ease;
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  padding: 0 20px;
+  color: #aed0d0;
+  font-size: 14px;
+  font-family: "Roboto Mono", monospace;
+  transition: color 0.3s ease;
 }
 
 .main .input-write .text-input::placeholder {
-    color: rgba(174, 208, 208, 0.5);
+  color: rgba(174, 208, 208, 0.5);
 }
 
 .main .input-write .text-input:focus {
-    color: #00bcd4;
+  color: #00bcd4;
 }
 
 .main .input-write .send {
-    background: transparent;
-    outline: none;
-    border: none;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 15px;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    margin-right: 5px;
+  background: transparent;
+  outline: none;
+  border: none;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin-right: 5px;
 }
 
 .main .input-write .send:hover {
-    background: rgba(0, 188, 212, 0.1);
-    transform: scale(1.1);
+  background: rgba(0, 188, 212, 0.1);
+  transform: scale(1.1);
 }
 
 .main .input-write .send:active {
-    transform: scale(0.95);
+  transform: scale(0.95);
 }
 
 .main .input-write .send i {
-    font-size: 18px;
-    color: #00bcd4;
-    transition: all 0.3s ease;
+  font-size: 18px;
+  color: #00bcd4;
+  transition: all 0.3s ease;
 }
 
 .main .input-write .send:hover i {
-    color: #00e5ff;
-    transform: scale(1.1);
+  color: #00e5ff;
+  transform: scale(1.1);
 }
 
 footer {
-    width: 100%;
-    padding: 25px 20px;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(0, 188, 212, 0.1);
-    margin-top: auto;
+  width: 100%;
+  padding: 25px 20px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 188, 212, 0.1);
+  margin-top: auto;
 }
 
 footer p {
-    color: #6b7d7d;
-    font-size: clamp(11px, 1.5vw, 13px);
-    margin: 0;
-    font-weight: 300;
-    letter-spacing: 0.5px;
+  color: #6b7d7d;
+  font-size: clamp(11px, 1.5vw, 13px);
+  margin: 0;
+  font-weight: 300;
+  letter-spacing: 0.5px;
 }
 
 /* Responsividade - Tablet */
 @media (max-width: 1024px) {
-    .main {
-        padding: 15px;
-    }
-    
-    .main .image-container {
-        max-width: 500px;
-    }
-    
-    .main .input {
-        max-width: 450px;
-        height: 55px;
-    }
+  .main {
+    padding: 15px;
+  }
+
+  .main .image-container {
+    max-width: 500px;
+  }
+
+  .main .input {
+    max-width: 450px;
+    height: 55px;
+  }
 }
 
 /* Responsividade - Mobile */
 @media (max-width: 768px) {
-    .main {
-        min-height: calc(100vh - 70px);
-        padding: 15px 10px;
-    }
-    
-    .main .image-container {
-        padding: 15px;
-        max-width: 100%;
-    }
-    
-    .main .image-container .image img {
-        max-width: 280px;
-        border-radius: 15px;
-    }
-    
-    .main .image-container h1 {
-        letter-spacing: 2px;
-        margin-bottom: 8px;
-    }
-    
-    .main .image-container p {
-        margin-bottom: 30px;
-    }
-    
-    .main .input {
-        width: 95%;
-        max-width: 400px;
-        height: 55px;
-        border-radius: 27px;
-    }
-    
-    .main .input .talk {
-        width: 55px;
-        height: 55px;
-    }
-    
-    .main .input .talk i {
-        font-size: 20px;
-    }
-    
-    .main .input .write {
-        width: 55px;
-        height: 55px;
-    }
-    
-    .main .input .write i {
-        font-size: 20px;
-    }
-    
-    .main .input .content {
-        margin-right: 15px;
-        margin-left: 8px;
-    }
-    
-    .main .input-write {
-        width: 95%;
-        max-width: 400px;
-        height: 55px;
-        border-radius: 27px;
-    }
-    
-    .main .input-write .text-input {
-        font-size: 13px;
-    }
-    
-    .main .input-write .send {
-        width: 55px;
-        height: 55px;
-    }
-    
-    .main .input-write .send i {
-        font-size: 16px;
-    }
-    
-    footer {
-        padding: 20px 15px;
-    }
+  .main {
+    min-height: calc(100vh - 70px);
+    padding: 15px 10px;
+  }
+
+  .main .image-container {
+    padding: 15px;
+    max-width: 100%;
+  }
+
+  .main .image-container .image img {
+    max-width: 280px;
+    border-radius: 15px;
+  }
+
+  .main .image-container h1 {
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .main .image-container p {
+    margin-bottom: 30px;
+  }
+
+  .main .input {
+    width: 95%;
+    max-width: 400px;
+    height: 55px;
+    border-radius: 27px;
+  }
+
+  .main .input .talk {
+    width: 55px;
+    height: 55px;
+  }
+
+  .main .input .talk i {
+    font-size: 20px;
+  }
+
+  .main .input .write {
+    width: 55px;
+    height: 55px;
+  }
+
+  .main .input .write i {
+    font-size: 20px;
+  }
+
+  .main .input .content {
+    margin-right: 15px;
+    margin-left: 8px;
+  }
+
+  .main .input-write {
+    width: 95%;
+    max-width: 400px;
+    height: 55px;
+    border-radius: 27px;
+  }
+
+  .main .input-write .text-input {
+    font-size: 13px;
+  }
+
+  .main .input-write .send {
+    width: 55px;
+    height: 55px;
+  }
+
+  .main .input-write .send i {
+    font-size: 16px;
+  }
+
+  footer {
+    padding: 20px 15px;
+  }
 }
 
 /* Responsividade - Mobile Pequeno */
 @media (max-width: 480px) {
-    .main {
-        padding: 10px 5px;
-    }
-    
-    .main .image-container {
-        padding: 10px;
-    }
-    
-    .main .image-container .image img {
-        max-width: 220px;
-    }
-    
-    .main .image-container h1 {
-        letter-spacing: 1px;
-    }
-    
-    .main .input {
-        width: 98%;
-        height: 50px;
-        border-radius: 25px;
-    }
-    
-    .main .input .talk {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .main .input .talk i {
-        font-size: 18px;
-    }
-    
-    .main .input .write {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .main .input .write i {
-        font-size: 18px;
-    }
-    
-    .main .input .content {
-        font-size: 12px;
-        margin-right: 10px;
-        margin-left: 5px;
-    }
-    
-    .main .input-write {
-        width: 98%;
-        height: 50px;
-        border-radius: 25px;
-        margin-top: 12px;
-    }
-    
-    .main .input-write .text-input {
-        font-size: 12px;
-        padding: 0 15px;
-    }
-    
-    .main .input-write .send {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .main .input-write .send i {
-        font-size: 16px;
-    }
-    
-    footer {
-        padding: 15px 10px;
-    }
+  .main {
+    padding: 10px 5px;
+  }
+
+  .main .image-container {
+    padding: 10px;
+  }
+
+  .main .image-container .image img {
+    max-width: 220px;
+  }
+
+  .main .image-container h1 {
+    letter-spacing: 1px;
+  }
+
+  .main .input {
+    width: 98%;
+    height: 50px;
+    border-radius: 25px;
+  }
+
+  .main .input .talk {
+    width: 50px;
+    height: 50px;
+  }
+
+  .main .input .talk i {
+    font-size: 18px;
+  }
+
+  .main .input .write {
+    width: 50px;
+    height: 50px;
+  }
+
+  .main .input .write i {
+    font-size: 18px;
+  }
+
+  .main .input .content {
+    font-size: 12px;
+    margin-right: 10px;
+    margin-left: 5px;
+  }
+
+  .main .input-write {
+    width: 98%;
+    height: 50px;
+    border-radius: 25px;
+    margin-top: 12px;
+  }
+
+  .main .input-write .text-input {
+    font-size: 12px;
+    padding: 0 15px;
+  }
+
+  .main .input-write .send {
+    width: 50px;
+    height: 50px;
+  }
+
+  .main .input-write .send i {
+    font-size: 16px;
+  }
+
+  footer {
+    padding: 15px 10px;
+  }
 }
 
 /* Responsividade - Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
-    .main {
-        min-height: auto;
-        padding: 10px;
-    }
-    
-    .main .image-container {
-        padding: 10px;
-    }
-    
-    .main .image-container .image img {
-        max-width: 200px;
-    }
-    
-    .main .image-container h1 {
-        font-size: 24px;
-        margin-bottom: 5px;
-    }
-    
-    .main .image-container p {
-        margin-bottom: 15px;
-        font-size: 12px;
-    }
-    
-    .main .input {
-        height: 45px;
-        margin-top: 10px;
-    }
-    
-    .main .input .talk {
-        width: 45px;
-        height: 45px;
-    }
+  .main {
+    min-height: auto;
+    padding: 10px;
+  }
+
+  .main .image-container {
+    padding: 10px;
+  }
+
+  .main .image-container .image img {
+    max-width: 200px;
+  }
+
+  .main .image-container h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+
+  .main .image-container p {
+    margin-bottom: 15px;
+    font-size: 12px;
+  }
+
+  .main .input {
+    height: 45px;
+    margin-top: 10px;
+  }
+
+  .main .input .talk {
+    width: 45px;
+    height: 45px;
+  }
 }
 
 /* Acessibilidade - Prefers Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-    }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
