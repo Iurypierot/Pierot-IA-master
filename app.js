@@ -122,6 +122,12 @@ function setupWriteButton() {
     if (text) {
       content.textContent = text;
       takeCommand(text.toLowerCase());
+      // Limpa o texto após enviar
+      setTimeout(() => {
+        if (content) {
+          content.textContent = "Clique aqui para falar";
+        }
+      }, 500); // Pequeno delay para o usuário ver que foi enviado
       closeWriteMode();
     } else {
       // Se estiver vazio, apenas fecha
@@ -185,8 +191,12 @@ function setupSendVoiceButton() {
       const text = pendingTranscript.trim();
       content.textContent = text;
       takeCommand(text.toLowerCase());
-      hideSendButton();
-      pendingTranscript = null;
+      // Limpa o texto e esconde o botão após enviar
+      setTimeout(() => {
+        content.textContent = "Clique aqui para falar";
+        hideSendButton();
+        pendingTranscript = null;
+      }, 500); // Pequeno delay para o usuário ver que foi enviado
       stopRecognition();
     }
   });
@@ -382,6 +392,7 @@ function setupRecognition() {
     content.textContent = "Audição...";
     hideSendButton(); // Esconde botão ao iniciar
     pendingTranscript = null;
+    lastProcessed = ""; // Limpa o último processado para permitir nova fala
     // Limpa qualquer timeout anterior
     if (recognitionTimeout) {
       clearTimeout(recognitionTimeout);
@@ -436,6 +447,12 @@ function setupRecognition() {
     if (!initialized) {
       initializeApp();
     }
+
+    // Limpa qualquer texto anterior e esconde botão de enviar
+    content.textContent = "Ouvindo...";
+    hideSendButton();
+    pendingTranscript = null;
+    lastProcessed = "";
 
     // Cancela qualquer fala em andamento para ser mais rápido
     if (window.speechSynthesis) {
