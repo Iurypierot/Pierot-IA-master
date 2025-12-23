@@ -242,17 +242,55 @@ body {
   box-shadow: 0 12px 40px rgba(0, 188, 212, 0.2);
 }
 
+.main .input-write .close-write {
+  background: transparent;
+  outline: none;
+  border: none;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  margin-left: 5px;
+  flex-shrink: 0;
+}
+
+.main .input-write .close-write:hover {
+  background: rgba(255, 82, 82, 0.1);
+  transform: scale(1.1);
+}
+
+.main .input-write .close-write:active {
+  transform: scale(0.95);
+}
+
+.main .input-write .close-write i {
+  font-size: 18px;
+  color: #ff5252;
+  transition: all 0.3s ease;
+}
+
+.main .input-write .close-write:hover i {
+  color: #ff6e6e;
+  transform: scale(1.1);
+}
+
 .main .input-write .text-input {
   background: transparent;
   border: none;
   outline: none;
   width: 100%;
   height: 100%;
-  padding: 0 20px;
+  padding: 0 15px;
   color: #aed0d0;
   font-size: 14px;
   font-family: "Roboto Mono", monospace;
   transition: color 0.3s ease;
+  flex: 1;
 }
 
 .main .input-write .text-input::placeholder {
@@ -396,8 +434,18 @@ footer p {
     border-radius: 27px;
   }
 
+  .main .input-write .close-write {
+    width: 45px;
+    height: 45px;
+  }
+
+  .main .input-write .close-write i {
+    font-size: 16px;
+  }
+
   .main .input-write .text-input {
     font-size: 13px;
+    padding: 0 12px;
   }
 
   .main .input-write .send {
@@ -469,9 +517,18 @@ footer p {
     margin-top: 12px;
   }
 
+  .main .input-write .close-write {
+    width: 40px;
+    height: 40px;
+  }
+
+  .main .input-write .close-write i {
+    font-size: 14px;
+  }
+
   .main .input-write .text-input {
     font-size: 12px;
-    padding: 0 15px;
+    padding: 0 10px;
   }
 
   .main .input-write .send {
@@ -480,7 +537,7 @@ footer p {
   }
 
   .main .input-write .send i {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   footer {

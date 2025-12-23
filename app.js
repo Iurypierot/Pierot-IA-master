@@ -87,9 +87,10 @@ function setupWriteButton() {
   const inputWrite = document.querySelector(".input-write");
   const textInput = document.querySelector(".text-input");
   const sendBtn = document.querySelector(".send");
+  const closeWriteBtn = document.querySelector(".close-write");
   const inputContainer = document.querySelector(".input");
 
-  if (!writeBtn || !inputWrite || !textInput || !sendBtn) {
+  if (!writeBtn || !inputWrite || !textInput || !sendBtn || !inputContainer) {
     console.error("Elementos de escrita não encontrados!");
     return;
   }
@@ -98,14 +99,21 @@ function setupWriteButton() {
   function openWriteMode() {
     inputContainer.style.display = "none";
     inputWrite.style.display = "flex";
-    textInput.focus();
+    // Pequeno delay para garantir que o display foi aplicado antes do focus
+    setTimeout(() => {
+      textInput.focus();
+    }, 50);
   }
 
   // Função para fechar campo de digitação
   function closeWriteMode() {
-    inputContainer.style.display = "flex";
     inputWrite.style.display = "none";
+    inputContainer.style.display = "flex";
     textInput.value = "";
+    // Foca no botão de voz quando voltar
+    if (btn) {
+      btn.focus();
+    }
   }
 
   // Função para processar texto enviado
@@ -113,7 +121,10 @@ function setupWriteButton() {
     const text = textInput.value.trim();
     if (text) {
       content.textContent = text;
-      takeCommand(text);
+      takeCommand(text.toLowerCase());
+      closeWriteMode();
+    } else {
+      // Se estiver vazio, apenas fecha
       closeWriteMode();
     }
   }
@@ -124,9 +135,15 @@ function setupWriteButton() {
   // Eventos do botão de envio
   sendBtn.addEventListener("click", handleTextSubmit);
 
+  // Eventos do botão de fechar
+  if (closeWriteBtn) {
+    closeWriteBtn.addEventListener("click", closeWriteMode);
+  }
+
   // Enviar ao pressionar Enter
   textInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
+      e.preventDefault();
       handleTextSubmit();
     }
   });
@@ -163,7 +180,6 @@ function setupRecognition() {
     return;
   }
 
-  recognition = new SpeechRecognition();
   recognition = new SpeechRecognition();
   recognition.lang = "pt-BR";
   recognition.continuous = false;
