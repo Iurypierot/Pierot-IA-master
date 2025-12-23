@@ -337,6 +337,66 @@ body {
   transform: scale(1.1);
 }
 
+/* Botão de enviar voz */
+.send-voice {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 500px;
+  min-width: 280px;
+  height: 55px;
+  margin-top: 15px;
+  padding: 0 25px;
+  border-radius: 27px;
+  background: rgba(0, 188, 212, 0.2);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(0, 188, 212, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 188, 212, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeInUp 0.4s ease-out forwards;
+  font-family: "Roboto Mono", monospace;
+}
+
+.send-voice:hover {
+  background: rgba(0, 188, 212, 0.3);
+  border-color: rgba(0, 188, 212, 0.6);
+  box-shadow: 0 12px 40px rgba(0, 188, 212, 0.4);
+  transform: translateY(-2px);
+}
+
+.send-voice:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 20px rgba(0, 188, 212, 0.3);
+}
+
+.send-voice i {
+  font-size: 20px;
+  color: #00bcd4;
+  transition: all 0.3s ease;
+}
+
+.send-voice:hover i {
+  color: #00e5ff;
+  transform: scale(1.1);
+}
+
+.send-voice span {
+  color: #00bcd4;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+.send-voice:hover span {
+  color: #00e5ff;
+}
+
 footer {
   width: 100%;
   padding: 25px 20px;
@@ -538,6 +598,22 @@ footer p {
 
   .main .input-write .send i {
     font-size: 14px;
+  }
+
+  .send-voice {
+    width: 98%;
+    height: 48px;
+    padding: 0 15px;
+    margin-top: 10px;
+    border-radius: 24px;
+  }
+
+  .send-voice i {
+    font-size: 16px;
+  }
+
+  .send-voice span {
+    font-size: 13px;
   }
 
   footer {

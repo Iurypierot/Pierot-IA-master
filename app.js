@@ -156,10 +156,15 @@ function setupWriteButton() {
   });
 }
 
+// Variável para o botão de enviar voz
+let sendVoiceBtn = null;
+let pendingTranscript = null; // Armazena o texto pendente para envio
+
 // Função para inicializar quando o DOM estiver pronto
 function initApp() {
   btn = document.querySelector(".talk");
   content = document.querySelector(".content");
+  sendVoiceBtn = document.querySelector(".send-voice");
 
   if (!btn || !content) {
     console.error("Elementos não encontrados!");
@@ -168,6 +173,51 @@ function initApp() {
 
   setupRecognition();
   setupWriteButton();
+  setupSendVoiceButton();
+}
+
+// Função para configurar o botão de enviar voz
+function setupSendVoiceButton() {
+  if (!sendVoiceBtn) return;
+
+  sendVoiceBtn.addEventListener("click", () => {
+    if (pendingTranscript && pendingTranscript.trim().length > 0) {
+      const text = pendingTranscript.trim();
+      content.textContent = text;
+      takeCommand(text.toLowerCase());
+      hideSendButton();
+      pendingTranscript = null;
+      stopRecognition();
+    }
+  });
+}
+
+// Função para mostrar o botão de enviar
+function showSendButton() {
+  if (sendVoiceBtn) {
+    sendVoiceBtn.style.display = "flex";
+    // Animação suave
+    setTimeout(() => {
+      if (sendVoiceBtn) {
+        sendVoiceBtn.style.opacity = "1";
+        sendVoiceBtn.style.transform = "translateY(0)";
+      }
+    }, 10);
+  }
+}
+
+// Função para esconder o botão de enviar
+function hideSendButton() {
+  if (sendVoiceBtn) {
+    sendVoiceBtn.style.opacity = "0";
+    sendVoiceBtn.style.transform = "translateY(-10px)";
+    setTimeout(() => {
+      if (sendVoiceBtn) {
+        sendVoiceBtn.style.display = "none";
+      }
+    }, 300);
+  }
+  pendingTranscript = null;
 }
 
 // Configura o reconhecimento de voz
@@ -199,59 +249,60 @@ function setupRecognition() {
     const isFinal = event.results[currentIndex].isFinal;
 
     content.textContent = transcript;
+    pendingTranscript = transcript; // Armazena o texto pendente
 
     // Limpa timeout anterior
     if (processingTimeout) {
       clearTimeout(processingTimeout);
     }
 
-    // iOS: processa resultados finais imediatamente ou intermediários após delay
+    // Quando há texto reconhecido, mostra o botão de enviar
+    if (transcript.length > 0) {
+      showSendButton();
+    }
+
+    // iOS: quando final, mostra botão e para o microfone (mas não processa automaticamente)
     if (isIOS) {
       if (isFinal && transcript !== lastProcessed && transcript.length > 0) {
         lastProcessed = transcript;
-        // Processa imediatamente se for final
-        takeCommand(transcript);
-        // Para o microfone imediatamente após processar
+        // Para o microfone mas não processa - espera o botão de enviar
         stopRecognition();
       } else if (!isFinal && transcript.length > 1 && transcript !== lastProcessed) {
-        // iOS: processa resultados intermediários após 800ms de estabilidade (mais rápido)
+        // iOS: após estabilidade, mostra botão e para microfone
         processingTimeout = setTimeout(() => {
-          // Verifica se o transcript ainda é o mesmo (não mudou)
           const currentTranscript = content.textContent.trim().toLowerCase();
           if (currentTranscript === transcript && 
               transcript !== lastProcessed && 
               transcript.length > 0) {
             lastProcessed = transcript;
-            takeCommand(transcript);
+            // Para o microfone mas não processa - espera o botão de enviar
             stopRecognition();
           }
-        }, 800); // 800ms para iOS (balanceado entre velocidade e confiabilidade)
+        }, 800);
       }
     }
-    // Android/Outros: processa imediatamente se for final
+    // Android/Outros: quando final, mostra botão e para o microfone
     else {
       if (isFinal && transcript !== lastProcessed) {
         lastProcessed = transcript;
-        takeCommand(transcript);
-        // Para o microfone imediatamente após processar
+        // Para o microfone mas não processa - espera o botão de enviar
         stopRecognition();
       }
-      // Processa resultados intermediários após 0.2s de silêncio (ultra rápido)
+      // Para resultados intermediários, mostra botão mas continua ouvindo
       else if (
         !isFinal &&
         transcript.length > 2 &&
         transcript !== lastProcessed
       ) {
-        // Detecta comandos rápidos mesmo em resultados intermediários
+        // Mostra botão mas continua ouvindo para capturar mais
         if (isQuickCommand(transcript)) {
           processingTimeout = setTimeout(() => {
             if (transcript !== lastProcessed) {
               lastProcessed = transcript;
-              takeCommand(transcript);
-              // Para o microfone após processar comando rápido
+              // Para o microfone mas não processa - espera o botão de enviar
               stopRecognition();
             }
-          }, 200); // Processa após apenas 200ms de estabilidade (mais rápido)
+          }, 200);
         }
       }
     }
@@ -290,29 +341,17 @@ function setupRecognition() {
       recognitionTimeout = null;
     }
     
-    // iOS: Se ainda não processou e tem texto no content, processa agora
-    if (isIOS) {
-      const currentText = content.textContent.trim().toLowerCase();
-      if (currentText && 
-          currentText !== "audição..." && 
-          currentText !== "ouvindo..." &&
-          currentText !== "clique aqui para falar" &&
-          currentText !== lastProcessed &&
-          currentText.length > 0) {
-        // Processa o texto que está no content
-        lastProcessed = currentText;
-        takeCommand(currentText);
-      }
-    }
-    
-    // Reconhecimento terminou (normal ou por erro)
-    // Reseta o estado para permitir novo reconhecimento
-    if (
-      content.textContent === "Audição..." ||
-      content.textContent === "Ouvindo..."
-    ) {
+    // Se não tem texto válido, esconde o botão
+    const currentText = content.textContent.trim().toLowerCase();
+    if (!currentText || 
+        currentText === "audição..." || 
+        currentText === "ouvindo..." ||
+        currentText === "clique aqui para falar" ||
+        currentText.length === 0) {
+      hideSendButton();
       content.textContent = "Clique aqui para falar";
     }
+    // Se tem texto, mantém o botão visível para o usuário enviar
   };
 
   // Função para parar o reconhecimento de voz
@@ -341,6 +380,8 @@ function setupRecognition() {
 
   recognition.onstart = () => {
     content.textContent = "Audição...";
+    hideSendButton(); // Esconde botão ao iniciar
+    pendingTranscript = null;
     // Limpa qualquer timeout anterior
     if (recognitionTimeout) {
       clearTimeout(recognitionTimeout);
@@ -352,20 +393,18 @@ function setupRecognition() {
         recognition &&
         (recognition.state === "listening" || recognition.state === "starting")
       ) {
-        // iOS: tenta processar o que foi capturado antes de desligar
-        if (isIOS) {
-          const currentText = content.textContent.trim().toLowerCase();
-          if (currentText && 
-              currentText !== "audição..." && 
-              currentText !== "ouvindo..." &&
-              currentText !== "clique aqui para falar" &&
-              currentText !== lastProcessed &&
-              currentText.length > 0) {
-            lastProcessed = currentText;
-            takeCommand(currentText);
-          }
+        // Se tem texto, mostra botão; senão, apenas desliga
+        const currentText = content.textContent.trim().toLowerCase();
+        if (currentText && 
+            currentText !== "audição..." && 
+            currentText !== "ouvindo..." &&
+            currentText !== "clique aqui para falar" &&
+            currentText.length > 0) {
+          // Mostra botão para o usuário enviar manualmente
+          showSendButton();
+        } else {
+          content.textContent = "Tempo esgotado. Clique para falar novamente.";
         }
-        content.textContent = "Tempo esgotado. Clique para falar novamente.";
         stopRecognition();
       }
     }, timeoutDuration);
