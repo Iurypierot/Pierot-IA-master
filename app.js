@@ -205,13 +205,27 @@ function setupRecognition() {
       clearTimeout(processingTimeout);
     }
 
-    // iOS: processa apenas resultados finais (mais confiável)
+    // iOS: processa resultados finais imediatamente ou intermediários após delay
     if (isIOS) {
-      if (isFinal && transcript !== lastProcessed) {
+      if (isFinal && transcript !== lastProcessed && transcript.length > 0) {
         lastProcessed = transcript;
+        // Processa imediatamente se for final
         takeCommand(transcript);
         // Para o microfone imediatamente após processar
         stopRecognition();
+      } else if (!isFinal && transcript.length > 1 && transcript !== lastProcessed) {
+        // iOS: processa resultados intermediários após 800ms de estabilidade (mais rápido)
+        processingTimeout = setTimeout(() => {
+          // Verifica se o transcript ainda é o mesmo (não mudou)
+          const currentTranscript = content.textContent.trim().toLowerCase();
+          if (currentTranscript === transcript && 
+              transcript !== lastProcessed && 
+              transcript.length > 0) {
+            lastProcessed = transcript;
+            takeCommand(transcript);
+            stopRecognition();
+          }
+        }, 800); // 800ms para iOS (balanceado entre velocidade e confiabilidade)
       }
     }
     // Android/Outros: processa imediatamente se for final
@@ -275,6 +289,22 @@ function setupRecognition() {
       clearTimeout(recognitionTimeout);
       recognitionTimeout = null;
     }
+    
+    // iOS: Se ainda não processou e tem texto no content, processa agora
+    if (isIOS) {
+      const currentText = content.textContent.trim().toLowerCase();
+      if (currentText && 
+          currentText !== "audição..." && 
+          currentText !== "ouvindo..." &&
+          currentText !== "clique aqui para falar" &&
+          currentText !== lastProcessed &&
+          currentText.length > 0) {
+        // Processa o texto que está no content
+        lastProcessed = currentText;
+        takeCommand(currentText);
+      }
+    }
+    
     // Reconhecimento terminou (normal ou por erro)
     // Reseta o estado para permitir novo reconhecimento
     if (
@@ -311,19 +341,34 @@ function setupRecognition() {
 
   recognition.onstart = () => {
     content.textContent = "Audição...";
-    // Timeout para desligar microfone automaticamente após 10 segundos sem fala
+    // Limpa qualquer timeout anterior
     if (recognitionTimeout) {
       clearTimeout(recognitionTimeout);
     }
+    // Timeout para desligar microfone automaticamente
+    const timeoutDuration = isIOS ? 8000 : 10000; // iOS: 8 segundos, outros: 10 segundos
     recognitionTimeout = setTimeout(() => {
       if (
         recognition &&
         (recognition.state === "listening" || recognition.state === "starting")
       ) {
+        // iOS: tenta processar o que foi capturado antes de desligar
+        if (isIOS) {
+          const currentText = content.textContent.trim().toLowerCase();
+          if (currentText && 
+              currentText !== "audição..." && 
+              currentText !== "ouvindo..." &&
+              currentText !== "clique aqui para falar" &&
+              currentText !== lastProcessed &&
+              currentText.length > 0) {
+            lastProcessed = currentText;
+            takeCommand(currentText);
+          }
+        }
         content.textContent = "Tempo esgotado. Clique para falar novamente.";
         stopRecognition();
       }
-    }, 10000); // 10 segundos
+    }, timeoutDuration);
   };
 
   // Função auxiliar para detectar comandos rápidos
